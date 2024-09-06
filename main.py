@@ -13,14 +13,25 @@ if response.status_code == 200:
     soup = BeautifulSoup(html_content, 'html.parser')
 
     # Поиск всех элементов с классом, содержащим 'product_item_art'
-    product_items = soup.find_all(class_='product_item_art')
-    product_item_size = soup.find_all(class_='product_item_size')
+    # Поиск всех тегов <a> с классом 'product_item_image'
+    links = soup.find_all('a', class_='product_item_image')
+    # Вывод всех найденных ссылок
+    for link in links:
+        href = link.get('href')
+        if href:
+            full_url = 'https://belbazar24.by' + href  # Дополняем URL до полного
+            print(full_url)
+    # product_item_size = soup.find_all(class_='product_item_size')
+    # product_item_price = soup.find_all(class_='product_item_price')
     # Вывод всех найденных элементов
-    for item in product_items:
-        print(item.get_text(strip=True))
+    # for item in product_item_image:
+    #     print(item.get_text(strip=True))
 
-    for size in product_item_size:
-        print(size.get_text(strip=True))
+    # for size in product_item_size:
+    #     print(size.get_text(strip=True))
+
+    # for price in product_item_price:
+    #     print(price.get_text(strip=True))
 
 
 else:
