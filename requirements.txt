@@ -1,4 +1,6 @@
-loguru
+loguru~=0.7.2
 flask
 requests~=2.32.3
 beautifulsoup4~=4.12.3
+bs4~=0.0.2
+peewee~=3.17.6
