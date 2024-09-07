@@ -4,7 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 from loguru import logger
 
-from database import add_user
+from database import add_user, remove_duplicates
 
 # URL начальной страницы
 base_url = 'https://belbazar24.by'
@@ -70,6 +70,7 @@ def scrape_all_pages(start_url):
                 for product_link in product_links:
                     logger.info(f"Ссылки на товары: {product_link}")
                     add_user(product_link)
+                remove_duplicates() # Удаление дубликатов из базы данных
             else:
                 logger.info(f"Ошибка при получении страницы {current_url}")
     except Exception as e:

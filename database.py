@@ -24,3 +24,23 @@ def add_user(product_links):
     except IntegrityError:
         return None
 
+def remove_duplicates():
+    """Функция для удаления дубликатов из таблицы `product_link` по полю `product_links`."""
+    # Найти дубликаты по полю `product_links`
+    duplicates = (product_link
+                  .select(product_link.product_links, fn.COUNT(product_link.id).alias('count'))
+                  .group_by(product_link.product_links)
+                  .having(fn.COUNT(product_link.id) > 1))
+
+    # Для каждого дубликата сохранить одно значение, а остальные удалить
+    for duplicate in duplicates:
+        # Получаем все записи с текущим значением `product_links`
+        records = product_link.select().where(product_link.product_links == duplicate.product_links)
+
+        # Пропускаем первую запись, а остальные удаляем
+        for record in records[1:]:
+            record.delete_instance()
+
+
+if __name__ == '__main__':
+    remove_duplicates()
