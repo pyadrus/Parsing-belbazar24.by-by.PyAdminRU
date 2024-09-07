@@ -84,10 +84,10 @@ def scrape_all_pages(start_url):
     return all_product_links
 
 
-# Запуск сбора данных
-all_product_links = scrape_all_pages(start_url)
 
-# Вывод всех найденных ссылок на товары
-logger.info("\nВсе ссылки на товары:")
+all_product_links = scrape_all_pages(start_url)# Запуск сбора данных
+
+
+logger.info("\nВсе ссылки на товары:")# Вывод всех найденных ссылок на товары
 for link in all_product_links:
     logger.info(link)
