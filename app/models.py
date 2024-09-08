@@ -4,13 +4,16 @@ from loguru import logger
 # Настройка подключения к базе данных
 db = SqliteDatabase('database.db')
 
+
 # Определение модели
 class BaseModel(Model):
     class Meta:
         database = db
 
+
 class Product_Link(BaseModel):
     product_links = CharField()
+
 
 # Модель для хранения информации о продуктах
 class Product(BaseModel):
@@ -21,7 +24,8 @@ class Product(BaseModel):
     color = CharField()  # Цвет
     size = CharField()  # Размер
 
-db.connect()# Создание таблиц, если они не существуют
+
+db.connect()  # Создание таблиц, если они не существуют
 
 # Проверка и создание таблиц, если они не существуют
 if not Product_Link.table_exists():
@@ -47,12 +51,14 @@ def add_product(link, name, article, material, color, size):
     except Exception as e:
         logger.error(f"Ошибка при добавлении продукта: {e}")
 
+
 def add_user(product_links):
     """ Функция для записи данных в базу данных """
     try:
         Product_Link.create(product_links=product_links)
     except IntegrityError:
         return None
+
 
 def remove_duplicates():
     """Функция для удаления дубликатов из таблицы `product_link` по полю `product_links`."""
@@ -71,6 +77,7 @@ def remove_duplicates():
         for record in records[1:]:
             record.delete_instance()
 
+
 def get_all_product_links():
     """Функция для получения всех записей из таблицы `product_link`."""
     try:
@@ -80,6 +87,7 @@ def get_all_product_links():
     except Exception as e:
         logger.error(f"Ошибка при получении данных: {e}")
         return []
+
 
 if __name__ == '__main__':
     remove_duplicates()

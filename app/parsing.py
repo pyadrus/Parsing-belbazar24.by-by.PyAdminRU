@@ -10,6 +10,7 @@ from app.models import add_user, remove_duplicates, get_all_product_links, add_p
 # URL начальной страницы
 base_url = 'https://belbazar24.by'
 
+
 def get_html(url):
     """Получить HTML-код страницы по URL."""
     response = requests.get(url)
@@ -23,7 +24,7 @@ def get_html(url):
 def extract_product_links(soup):
     """Извлечь ссылки на товары со страницы."""
     product_links = []
-    links = soup.find_all('a', class_='product_item_image') # Поиск всех тегов <a> с классом 'product_item_image'
+    links = soup.find_all('a', class_='product_item_image')  # Поиск всех тегов <a> с классом 'product_item_image'
     for link in links:
         href = link.get('href')
         if href:
@@ -35,10 +36,11 @@ def extract_product_links(soup):
 def find_max_page(soup):
     """Найти наибольший номер страницы из навигации."""
     max_page = 1
-    page_numbers = soup.select('.navigation_content a')# Поиск всех ссылок на страницы в элементе с классом 'navigation_content'
+    page_numbers = soup.select(
+        '.navigation_content a')  # Поиск всех ссылок на страницы в элементе с классом 'navigation_content'
     for page_number in page_numbers:
         try:
-            number = int(page_number.text.strip())# Попытка получить номер страницы как целое число
+            number = int(page_number.text.strip())  # Попытка получить номер страницы как целое число
             if number > max_page:
                 max_page = number
         except ValueError:
@@ -49,25 +51,25 @@ def find_max_page(soup):
 def scrape_all_pages(start_url):
     """Собирать ссылки на товары со всех страниц с пагинацией."""
     try:
-        html_content = get_html(start_url) # Получаем HTML начальной страницы
+        html_content = get_html(start_url)  # Получаем HTML начальной страницы
         if not html_content:
             return []
         soup = BeautifulSoup(html_content, 'html.parser')
-        max_page = find_max_page(soup)# Определяем максимальное количество страниц
+        max_page = find_max_page(soup)  # Определяем максимальное количество страниц
         logger.info(f"Наибольшая страница: {max_page}")
-        for page in range(1, max_page + 1):# Цикл по всем страницам
+        for page in range(1, max_page + 1):  # Цикл по всем страницам
             current_url = f"{start_url}&page={page}"
-            time.sleep(0.4) # Пауза в 0.4 секунды, меньше не ставить, так как на сайте присутствует защита
+            time.sleep(0.4)  # Пауза в 0.4 секунды, меньше не ставить, так как на сайте присутствует защита
             logger.info(f"Обрабатывается страница: {current_url}")
             html_content = get_html(current_url)
             if html_content:
                 soup = BeautifulSoup(html_content, 'html.parser')
-                product_links = extract_product_links(soup)# Извлечение ссылок на товары
+                product_links = extract_product_links(soup)  # Извлечение ссылок на товары
                 logger.info(f"Найдено {len(product_links)} товаров")
                 for product_link in product_links:
                     logger.info(f"Ссылки на товары: {product_link}")
                     add_user(product_link)
-                remove_duplicates() # Удаление дубликатов из базы данных
+                remove_duplicates()  # Удаление дубликатов из базы данных
             else:
                 logger.info(f"Ошибка при получении страницы {current_url}")
     except Exception as e:
@@ -114,16 +116,17 @@ def parsing_products_via_links():
         size_output = ', '.join(size_list) if size_list else 'Не указано'
 
         # Логирование и сохранение
-        logger.info(f"Ссылка {link}, Данные: Тип одежды: {result.get('Тип одежды', 'Не указано')}; Цвет: {color}; Состав: {material}; Рост: {result.get('Рост', 'Не указан')}, Размеры: {size_output}")
+        logger.info(
+            f"Ссылка {link}, Данные: Тип одежды: {result.get('Тип одежды', 'Не указано')}; Цвет: {color}; Состав: {material}; Рост: {result.get('Рост', 'Не указан')}, Размеры: {size_output}")
 
         # Добавление в базу данных
         add_product(
-            link=link, # Ссылка
-            name=name, # Название
-            article=article, # Артикул
-            material=material, # Тип одежды
-            color=color, # Цвет
-            size=size_output # Размеры
+            link=link,  # Ссылка
+            name=name,  # Название
+            article=article,  # Артикул
+            material=material,  # Тип одежды
+            color=color,  # Цвет
+            size=size_output  # Размеры
         )
 
 

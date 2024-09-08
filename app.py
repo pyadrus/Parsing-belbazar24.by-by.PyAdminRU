@@ -6,20 +6,23 @@ start_url = 'https://belbazar24.by/women/dress/?filtr=3:33;3:34;3:35;3:36;3:37;3
 
 app = Flask(__name__)
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 @app.route('/action', methods=['POST'])
 def action():
     user_input = int(request.form['user_input'])
 
     if user_input == 1:
-        scrape_all_pages(start_url) # Запуск сбора данных
+        scrape_all_pages(start_url)  # Запуск сбора данных
     elif user_input == 2:
         parsing_products_via_links()
 
     return redirect(url_for('index'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
