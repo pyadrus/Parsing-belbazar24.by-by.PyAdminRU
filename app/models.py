@@ -2,7 +2,7 @@ from peewee import *
 from loguru import logger
 
 # Настройка подключения к базе данных
-db = SqliteDatabase('my_database.db')
+db = SqliteDatabase('database.db')
 
 # Определение модели
 class BaseModel(Model):

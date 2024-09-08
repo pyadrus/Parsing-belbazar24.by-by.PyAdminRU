@@ -4,7 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 from loguru import logger
 
-from database import add_user, remove_duplicates, get_all_product_links
+from app.models import add_user, remove_duplicates, get_all_product_links
 
 # URL начальной страницы
 base_url = 'https://belbazar24.by'
@@ -72,12 +72,34 @@ def scrape_all_pages(start_url):
     except Exception as e:
         logger.exception(e)
 
+
 def parsing_products_via_links():
     """Парсинг данных из ссылок по базе данных"""
     all_links = get_all_product_links()  # Пример использования функции для чтения данных
-
     for link in all_links:
-        logger.info(link)  # Вывод всех ссылок из базы данных
+        html_content = get_html(link)  # Получаем HTML начальной страницы
+        # Парсинг HTML с использованием BeautifulSoup
+        soup = BeautifulSoup(html_content, 'html.parser')
+
+        # Извлечение всех элементов с классом 'prod_param_item'
+        params = soup.find_all('div', class_='prod_param_item')
+
+        # Преобразование в удобный формат
+        result = []
+        for param in params:
+            key = param.find('b').get_text(strip=True).rstrip(':')
+            value = param.get_text(strip=True).replace(key + ':', '').strip()
+            result.append(f"{key}: {value}")
+
+        output = '; '.join(result)  # Объединение в строку
+
+        # Извлечение всех размеров с классом 'prod_size_item'
+        sizes = soup.find_all('div', class_='prod_size_item')
+        size_list = [size.get_text(strip=True) for size in sizes]
+
+        # Преобразование размеров в строку
+        size_output = ', '.join(size_list) if size_list else 'Не указано'
+        logger.info(f"Данные: {output}, Размеры: {size_output}")
 
 if __name__ == '__main__':
     parsing_products_via_links()
