@@ -1,10 +1,11 @@
+import re
 import time
 
 import requests
 from bs4 import BeautifulSoup
 from loguru import logger
 
-from app.models import add_user, remove_duplicates, get_all_product_links
+from app.models import add_user, remove_duplicates, get_all_product_links, add_product
 
 # URL начальной страницы
 base_url = 'https://belbazar24.by'
@@ -81,25 +82,50 @@ def parsing_products_via_links():
         # Парсинг HTML с использованием BeautifulSoup
         soup = BeautifulSoup(html_content, 'html.parser')
 
+        # Извлечение артикула из блока 'prod_top_title'
+        prod_top_title = soup.find('div', class_='prod_top_title')
+        if prod_top_title:
+            article_text = prod_top_title.get_text(strip=True)
+            # Использование регулярного выражения для извлечения текста после 'Арт.'
+            match = re.search(r'Арт\.\s*([^\s\(\)]+)', article_text)
+            if match:
+                article = match.group(1)
+            else:
+                article = 'Не указан'
+        else:
+            article = 'Не указан'
+
         # Извлечение всех элементов с классом 'prod_param_item'
         params = soup.find_all('div', class_='prod_param_item')
-
-        # Преобразование в удобный формат
-        result = []
+        result = {}
         for param in params:
             key = param.find('b').get_text(strip=True).rstrip(':')
             value = param.get_text(strip=True).replace(key + ':', '').strip()
-            result.append(f"{key}: {value}")
+            result[key] = value
 
-        output = '; '.join(result)  # Объединение в строку
+        # Извлечение необходимых данных
+        material = result.get('Состав', 'Не указан')
+        color = result.get('Цвет', 'Не указан')
+        name = article  # Если название равно артикулу
 
         # Извлечение всех размеров с классом 'prod_size_item'
         sizes = soup.find_all('div', class_='prod_size_item')
         size_list = [size.get_text(strip=True) for size in sizes]
-
-        # Преобразование размеров в строку
         size_output = ', '.join(size_list) if size_list else 'Не указано'
-        logger.info(f"Данные: {output}, Размеры: {size_output}")
+
+        # Логирование и сохранение
+        logger.info(f"Ссылка {link}, Данные: Тип одежды: {result.get('Тип одежды', 'Не указано')}; Цвет: {color}; Состав: {material}; Рост: {result.get('Рост', 'Не указан')}, Размеры: {size_output}")
+
+        # Добавление в базу данных
+        add_product(
+            link=link, # Ссылка
+            name=name, # Название
+            article=article, # Артикул
+            material=material, # Тип одежды
+            color=color, # Цвет
+            size=size_output # Размеры
+        )
+
 
 if __name__ == '__main__':
     parsing_products_via_links()
