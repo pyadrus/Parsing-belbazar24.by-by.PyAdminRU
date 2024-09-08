@@ -4,13 +4,10 @@ import requests
 from bs4 import BeautifulSoup
 from loguru import logger
 
-from database import add_user, remove_duplicates
+from database import add_user, remove_duplicates, get_all_product_links
 
 # URL начальной страницы
 base_url = 'https://belbazar24.by'
-
-logger.add("log/log.log", rotation="1 MB", compression="zip")  # Логирование программы
-
 
 def get_html(url):
     """Получить HTML-код страницы по URL."""
@@ -74,3 +71,13 @@ def scrape_all_pages(start_url):
                 logger.info(f"Ошибка при получении страницы {current_url}")
     except Exception as e:
         logger.exception(e)
+
+def parsing_products_via_links():
+    """Парсинг данных из ссылок по базе данных"""
+    all_links = get_all_product_links()  # Пример использования функции для чтения данных
+
+    for link in all_links:
+        logger.info(link)  # Вывод всех ссылок из базы данных
+
+if __name__ == '__main__':
+    parsing_products_via_links()

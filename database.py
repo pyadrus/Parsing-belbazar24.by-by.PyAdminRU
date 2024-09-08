@@ -1,6 +1,5 @@
 from peewee import *
 from loguru import logger
-logger.add("log/log.log", rotation="1 MB", compression="zip")  # Логирование программы
 
 # Настройка подключения к базе данных
 db = SqliteDatabase('my_database.db')
@@ -41,6 +40,16 @@ def remove_duplicates():
         for record in records[1:]:
             record.delete_instance()
 
+def get_all_product_links():
+    """Функция для получения всех записей из таблицы `product_link`."""
+    try:
+        product_links = product_link.select()
+        # Преобразуем записи в список строк
+        return [record.product_links for record in product_links]
+    except Exception as e:
+        logger.error(f"Ошибка при получении данных: {e}")
+        return []
 
 if __name__ == '__main__':
     remove_duplicates()
+    get_all_product_links()
