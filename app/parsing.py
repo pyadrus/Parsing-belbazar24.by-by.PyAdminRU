@@ -138,8 +138,8 @@ def parsing_products_via_links():
         size_output = ', '.join(size_list) if size_list else 'Не указано'
 
         # Логирование и сохранение
-        logger.info(
-            f"Ссылка {link}, Данные: Тип одежды: {result.get('Тип одежды', 'Не указано')}; Цвет: {color}; Состав: {material}; Рост: {result.get('Рост', 'Не указан')}, Размеры: {size_output}")
+        logger.info(f"Ссылка {link}, Данные: Тип одежды: {result.get('Тип одежды', 'Не указано')}; Цвет: {color}; "
+                    f"Состав: {material}; Рост: {result.get('Рост', 'Не указан')}, Размеры: {size_output}")
 
         # Добавление в базу данных
         add_product(

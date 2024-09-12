@@ -1,3 +1,5 @@
+import time
+
 from flask import Flask, render_template, request, jsonify, redirect, url_for
 
 from app.parsing import scrape_all_pages, parsing_products_via_links
@@ -25,12 +27,13 @@ def action():
         export_products_to_csv(file_path='products.csv')
         return redirect(url_for('loading'))
 
+
     return redirect(url_for('index'))
 
 
 @app.route('/loading')
 def loading():
-    """Сообщение, что база данных формируется"""
+    """Показывает страницу загрузки"""
     return render_template('loading.html')
 
 

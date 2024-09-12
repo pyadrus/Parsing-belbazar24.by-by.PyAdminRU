@@ -1,12 +1,16 @@
-<!-- templates/loading.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Импорт данных</title>
+    <title>Loading...</title>
+    <script>
+        // Через 3 секунды автоматически перенаправит пользователя на страницу index
+        setTimeout(function(){
+            window.location.href = "{{ url_for('index') }}";
+        }, 3000);
+    </script>
 </head>
 <body>
-    <h1>Формирование данных...</h1>
-    <p>Пожалуйста, подождите, пока данные формируются.</p>
+<h1>База данных формируется. Пожалуйста, подождите...</h1>
 </body>
 </html>
