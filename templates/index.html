@@ -52,11 +52,12 @@
 <h1>Выберите действие</h1>
 
     <form method="post" action="{{ url_for('action') }}">
-        <p>Парсинг https://belbazar24.by https://belbazar24.by/women/ с парамерами «Материал» и «Цвет»</p>
+        <p>Парсинг <a href="https://belbazar24.by">https://belbazar24.by</a><a href="https://belbazar24.by/women/">https://belbazar24.by/women/</a> с парамерами «Материал» и «Цвет»</p>
         <button class="custom-button" type="submit" name="user_input" value="1" style="width: 350px; height: 23px; font-size: 16px;">Парсинг https://belbazar24.by</button><br><br>
         <p>Парсинг ссылок из базы данных в базу данных параметры: Ссылка на товар, Название товара (равен артикулу), Артикул, Материал, Цвет, Размер</p>
         <button class="custom-button" type="submit" name="user_input" value="2" style="width: 350px; height: 23px; font-size: 16px;">Парсинг товаров</button><br><br>
-
+        <p>Импорт товаров из базы данных в файл csv</p>
+        <button class="custom-button" type="submit" name="user_input" value="2" style="width: 350px; height: 23px; font-size: 16px;">Импорт товаров</button><br><br>
     </form>
 </body>
 

@@ -60,6 +60,24 @@ def add_user(product_links):
         return None
 
 
+def remove_duplicates_product():
+    """Функция для удаления дубликатов из таблицы `product_link` по полю `product_links`."""
+    # Найти дубликаты по полю `product_links`
+    duplicates = (Product
+                  .select(Product.article, fn.COUNT(Product.id).alias('count'))
+                  .group_by(Product.article)
+                  .having(fn.COUNT(Product.id) > 1))
+
+    # Для каждого дубликата сохранить одно значение, а остальные удалить
+    for duplicate in duplicates:
+        # Получаем все записи с текущим значением `product_links`
+        records = Product.select().where(Product.article == duplicate.article)
+
+        # Пропускаем первую запись, а остальные удаляем
+        for record in records[1:]:
+            record.delete_instance()
+
+
 def remove_duplicates():
     """Функция для удаления дубликатов из таблицы `product_link` по полю `product_links`."""
     # Найти дубликаты по полю `product_links`
@@ -92,3 +110,4 @@ def get_all_product_links():
 if __name__ == '__main__':
     remove_duplicates()
     get_all_product_links()
+    remove_duplicates_product()

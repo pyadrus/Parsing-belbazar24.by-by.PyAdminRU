@@ -5,7 +5,8 @@ import requests
 from bs4 import BeautifulSoup
 from loguru import logger
 
-from app.models import add_user, remove_duplicates, get_all_product_links, add_product
+from app.models import add_user, remove_duplicates, get_all_product_links, add_product, remove_duplicates_product, \
+    Product_Link
 
 # URL начальной страницы
 base_url = 'https://belbazar24.by'
@@ -50,6 +51,9 @@ def find_max_page(soup):
 
 def scrape_all_pages(start_url):
     """Собирать ссылки на товары со всех страниц с пагинацией."""
+
+    remove_duplicates()  # Удаление дубликатов из базы данных
+
     try:
         html_content = get_html(start_url)  # Получаем HTML начальной страницы
         if not html_content:
@@ -69,15 +73,33 @@ def scrape_all_pages(start_url):
                 for product_link in product_links:
                     logger.info(f"Ссылки на товары: {product_link}")
                     add_user(product_link)
-                remove_duplicates()  # Удаление дубликатов из базы данных
+
+                    remove_duplicates()  # Удаление дубликатов из базы данных
             else:
                 logger.info(f"Ошибка при получении страницы {current_url}")
     except Exception as e:
         logger.exception(e)
 
+        remove_duplicates()  # Удаление дубликатов из базы данных
+
+
+def remove_product_link(link):
+    """Функция для удаления записи из таблицы `Product_Link` по значению `product_links`."""
+    try:
+        query = Product_Link.get(Product_Link.product_links == link)
+        query.delete_instance()
+        logger.info(f"Ссылка удалена: {link}")
+    except Product_Link.DoesNotExist:
+        logger.warning(f"Ссылка не найдена в базе данных: {link}")
+    except Exception as e:
+        logger.error(f"Ошибка при удалении ссылки: {e}")
+
 
 def parsing_products_via_links():
     """Парсинг данных из ссылок по базе данных"""
+
+    # remove_duplicates_product() # Удаление дубликатов из базы данных
+
     all_links = get_all_product_links()  # Пример использования функции для чтения данных
     for link in all_links:
         html_content = get_html(link)  # Получаем HTML начальной страницы
@@ -128,6 +150,11 @@ def parsing_products_via_links():
             color=color,  # Цвет
             size=size_output  # Размеры
         )
+
+        # Удаление ссылки после парсинга и добавления в базу данных
+        remove_product_link(link)
+
+        remove_duplicates_product()  # Удаление дубликатов из базы данных
 
 
 if __name__ == '__main__':
