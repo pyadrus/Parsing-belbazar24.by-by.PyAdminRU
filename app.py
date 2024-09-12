@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 
 from app.parsing import scrape_all_pages, parsing_products_via_links
 from app.recording_data import export_products_to_csv
@@ -23,8 +23,15 @@ def action():
         parsing_products_via_links()
     elif user_input == 3:
         export_products_to_csv(file_path='products.csv')
+        return redirect(url_for('loading'))
 
     return redirect(url_for('index'))
+
+
+@app.route('/loading')
+def loading():
+    """Сообщение, что база данных формируется"""
+    return render_template('loading.html')
 
 
 if __name__ == '__main__':

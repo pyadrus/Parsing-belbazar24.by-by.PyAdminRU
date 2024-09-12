@@ -47,14 +47,7 @@ def export_products_to_csv(file_path):
                     'color': product.color,
                     'size': product.size
                 })
+
         logger.info(f"Данные успешно экспортированы в файл: {file_path}")
     except Exception as e:
         logger.error(f"Ошибка при экспорте данных в CSV: {e}")
-
-
-# if __name__ == '__main__':
-    # Путь к файлу, куда будут записаны данные
-    # file_path = 'products.csv'
-
-    # Экспорт данных в CSV
-    # export_products_to_csv(file_path='products.csv')
