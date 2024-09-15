@@ -27,7 +27,6 @@ def action():
         export_products_to_csv(file_path='products.csv')
         return redirect(url_for('loading'))
 
-
     return redirect(url_for('index'))
 
 
