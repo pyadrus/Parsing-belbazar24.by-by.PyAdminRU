@@ -5,14 +5,14 @@ import requests
 from bs4 import BeautifulSoup
 from loguru import logger
 
-from app.models import add_user, remove_duplicates, get_all_product_links, add_product, remove_duplicates_product, \
-    Product_Link
+from app.models_benefit import remove_duplicates_benefit, add_user_benefit, ProductLinkBenefit, \
+    get_all_product_links_benefit, add_product_benefit
 
 # URL начальной страницы
 base_url = 'https://belbazar24.by'
 
 
-def get_html(url):
+def get_html_benefit(url):
     """Получить HTML-код страницы по URL."""
     response = requests.get(url)
     if response.status_code == 200:
@@ -22,7 +22,7 @@ def get_html(url):
         return None
 
 
-def extract_product_links(soup):
+def extract_product_benefit(soup):
     """Извлечь ссылки на товары со страницы."""
     product_links = []
     links = soup.find_all('a', class_='product_item_image')  # Поиск всех тегов <a> с классом 'product_item_image'
@@ -34,7 +34,7 @@ def extract_product_links(soup):
     return product_links
 
 
-def find_max_page(soup):
+def find_max_page_benefit(soup):
     """Найти наибольший номер страницы из навигации."""
     max_page = 1
     page_numbers = soup.select(
@@ -49,60 +49,60 @@ def find_max_page(soup):
     return max_page
 
 
-def scrape_all_pages(start_url):
+def scrape_all_pages_benefit(start_url):
     """Собирать ссылки на товары со всех страниц с пагинацией."""
 
-    remove_duplicates()  # Удаление дубликатов из базы данных
+    remove_duplicates_benefit()  # Удаление дубликатов из базы данных
 
     try:
-        html_content = get_html(start_url)  # Получаем HTML начальной страницы
+        html_content = get_html_benefit(start_url)  # Получаем HTML начальной страницы
         if not html_content:
             return []
         soup = BeautifulSoup(html_content, 'html.parser')
-        max_page = find_max_page(soup)  # Определяем максимальное количество страниц
+        max_page = find_max_page_benefit(soup)  # Определяем максимальное количество страниц
         logger.info(f"Наибольшая страница: {max_page}")
         for page in range(1, max_page + 1):  # Цикл по всем страницам
             current_url = f"{start_url}&page={page}"
             time.sleep(0.4)  # Пауза в 0.4 секунды, меньше не ставить, так как на сайте присутствует защита
             logger.info(f"Обрабатывается страница: {current_url}")
-            html_content = get_html(current_url)
+            html_content = get_html_benefit(current_url)
             if html_content:
                 soup = BeautifulSoup(html_content, 'html.parser')
-                product_links = extract_product_links(soup)  # Извлечение ссылок на товары
+                product_links = extract_product_benefit(soup)  # Извлечение ссылок на товары
                 logger.info(f"Найдено {len(product_links)} товаров")
-                for product_link in product_links:
-                    logger.info(f"Ссылки на товары: {product_link}")
-                    add_user(product_link)
+                for product_links_benefit in product_links:
+                    logger.info(f"Ссылки на товары: {product_links_benefit}")
+                    add_user_benefit(product_links_benefit)
 
-                    remove_duplicates()  # Удаление дубликатов из базы данных
+                    remove_duplicates_benefit()  # Удаление дубликатов из базы данных
             else:
                 logger.info(f"Ошибка при получении страницы {current_url}")
     except Exception as e:
         logger.exception(e)
 
-        remove_duplicates()  # Удаление дубликатов из базы данных
+        remove_duplicates_benefit()  # Удаление дубликатов из базы данных
 
 
-def remove_product_link(link):
+def remove_product_link_benefit(link):
     """Функция для удаления записи из таблицы `Product_Link` по значению `product_links`."""
     try:
-        query = Product_Link.get(Product_Link.product_links == link)
+        query = ProductLinkBenefit.get(ProductLinkBenefit.product_links_benefit == link)
         query.delete_instance()
         logger.info(f"Ссылка удалена: {link}")
-    except Product_Link.DoesNotExist:
+    except ProductLinkBenefit.DoesNotExist:
         logger.warning(f"Ссылка не найдена в базе данных: {link}")
     except Exception as e:
         logger.error(f"Ошибка при удалении ссылки: {e}")
 
 
-def parsing_products_via_links():
+def parsing_products_via_links_benefit():
     """Парсинг данных из ссылок по базе данных"""
 
-    all_links = get_all_product_links()  # Пример использования функции для чтения данных
+    all_links = get_all_product_links_benefit()  # Пример использования функции для чтения данных
     for link in all_links:
         try:
 
-            html_content = get_html(link)  # Получаем HTML начальной страницы
+            html_content = get_html_benefit(link)  # Получаем HTML начальной страницы
             # Парсинг HTML с использованием BeautifulSoup
             soup = BeautifulSoup(html_content, 'html.parser')
 
@@ -142,7 +142,7 @@ def parsing_products_via_links():
                         f"Состав: {material}; Рост: {result.get('Рост', 'Не указан')}, Размеры: {size_output}")
 
             # Добавление в базу данных
-            add_product(
+            add_product_benefit(
                 link=link,  # Ссылка
                 name=name,  # Название
                 article=article,  # Артикул
@@ -151,9 +151,9 @@ def parsing_products_via_links():
                 size=size_output  # Размеры
             )
 
-            remove_product_link(link)  # Удаление ссылки после парсинга и добавления в базу данных
+            remove_product_link_benefit(link)  # Удаление ссылки после парсинга и добавления в базу данных
 
-            remove_duplicates_product()  # Удаление дубликатов из базы данных
+            remove_duplicates_benefit()  # Удаление дубликатов из базы данных
         except TypeError:  # Не рабочая ссылка
             logger.error(f"Ошибка при парсинге ссылки {link}: неверная ссылка")
         except requests.exceptions.ConnectionError:
@@ -164,4 +164,4 @@ def parsing_products_via_links():
 
 
 if __name__ == '__main__':
-    parsing_products_via_links()
+    parsing_products_via_links_benefit()

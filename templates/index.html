@@ -6,8 +6,8 @@
     <style>
         /* Стиль кнопок */
         button {
-            width: 350px;
-            height: 50px;
+            width: 345px; /* Ширина */
+            height: 35px; /* Высота */
             border-radius: 30px;
             font-size: 16px;
             font-family: inherit;
@@ -18,7 +18,7 @@
             box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
             transition: .5s ease; /* Плавный переход для заливки */
             cursor: pointer; /* Курсор указателя */
-            margin-bottom: 20px; /* Отступы между кнопками */
+            margin-bottom: 4px; /* Отступы между кнопками */
         }
 
         button::before {
@@ -59,13 +59,20 @@
             margin-bottom: 20px;
         }
 
+        h2 {
+            text-align: center;
+            font-size: 1em;
+            color: #222;
+            margin-bottom: 20px;
+        }
+
         form {
             background-color: #fff;
             padding: 40px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            max-width: 500px; /* Ограничение ширины формы */
+            text-align: left;
+            max-width: 1400px; /* Ограничение ширины формы */
             width: 100%;
         }
 
@@ -95,14 +102,31 @@
 
     <h1>Выберите действие</h1>
 
+    <hr align="center"/>
+
+    <h2>Фильтр "Материал и цвет"</h2>
+
     <p>Парсинг <a href="https://belbazar24.by">https://belbazar24.by</a> и <a href="https://belbazar24.by/women/">https://belbazar24.by/women/</a> с параметрами «Материал» и «Цвет»</p>
     <button type="submit" name="user_input" value="1">Парсинг https://belbazar24.by</button>
 
     <p>Парсинг ссылок из базы данных в базу данных. Параметры: Ссылка на товар, Название товара (равен артикулу), Артикул, Материал, Цвет, Размер</p>
     <button type="submit" name="user_input" value="2">Парсинг товаров</button>
 
-    <p>Импорт товаров из базы данных в файл CSV</p>
+    <p>Импорт товаров из базы данных в файл CSV с названием 'products.csv'</p>
     <button type="submit" name="user_input" value="3">Импорт товаров</button>
+
+    <hr align="center"/>
+
+    <h2>Фильтр "Купи выгодно"</h2>
+
+    <p>Парсинг <a href="https://belbazar24.by">https://belbazar24.by</a> и <a href="https://belbazar24.by/women/">https://belbazar24.by/women/</a> с параметрами «Купи выгодно»</p>
+    <button type="submit" name="user_input" value="4">Парсинг https://belbazar24.by</button>
+
+    <p>Парсинг ссылок из базы данных в базу данных. Параметры: Ссылка на товар, Название товара (равен артикулу), Артикул, Материал, Цвет, Размер</p>
+    <button type="submit" name="user_input" value="5">Парсинг товаров</button>
+
+    <p>Импорт товаров из базы данных в файл CSV с названием 'products_benefit.csv'</p>
+    <button type="submit" name="user_input" value="6">Импорт товаров</button>
 
 </form>
 
