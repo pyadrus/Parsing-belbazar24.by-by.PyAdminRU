@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from loguru import logger
 
 from app.models import add_user, remove_duplicates, get_all_product_links, add_product, remove_duplicates_product, \
-    Product_Link
+    ProductLink
 
 # URL начальной страницы
 base_url = 'https://belbazar24.by'
@@ -86,10 +86,10 @@ def scrape_all_pages(start_url):
 def remove_product_link(link):
     """Функция для удаления записи из таблицы `Product_Link` по значению `product_links`."""
     try:
-        query = Product_Link.get(Product_Link.product_links == link)
+        query = ProductLink.get(ProductLink.product_links == link)
         query.delete_instance()
         logger.info(f"Ссылка удалена: {link}")
-    except Product_Link.DoesNotExist:
+    except ProductLink.DoesNotExist:
         logger.warning(f"Ссылка не найдена в базе данных: {link}")
     except Exception as e:
         logger.error(f"Ошибка при удалении ссылки: {e}")
