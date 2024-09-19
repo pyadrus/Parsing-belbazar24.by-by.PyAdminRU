@@ -1,12 +1,12 @@
 from peewee import *
 from loguru import logger
 
-# Настройка подключения к базе данных
-db = SqliteDatabase('database.db')
+db = SqliteDatabase('database.db')  # Настройка подключения к базе данных
 
 
-# Определение модели
 class BaseModel(Model):
+    """Определение модели"""
+
     class Meta:
         database = db
 
@@ -16,8 +16,8 @@ class ProductLinkBenefit(BaseModel):
     product_links_benefit = CharField()
 
 
-# Модель для хранения информации о продуктах
 class ProductBenefit(BaseModel):
+    """Модель для хранения информации о продуктах"""
     link = CharField(unique=True)  # Ссылка на товар
     name = CharField()  # Название товара (равно артикулу)
     article = CharField()  # Артикул
@@ -36,7 +36,15 @@ if not ProductBenefit.table_exists():
 
 
 def add_product_benefit(link, name, article, material, color, size):
-    """Функция для добавления данных о продукте в базу данных"""
+    """
+    Функция для добавления данных о продукте в базу данных
+    :param link: Ссылка на товар
+    :param name: Название товара (равно артикулу)
+    :param article: Артикул
+    :param material: Материал
+    :param color: Цвет
+    :param size: Размер
+    """
     try:
         ProductBenefit.create(
             link=link,
@@ -54,7 +62,11 @@ def add_product_benefit(link, name, article, material, color, size):
 
 
 def add_user_benefit(product_links_benefit):
-    """ Функция для записи данных в базу данных """
+    """
+    Функция для записи данных в базу данных
+    :param product_links_benefit: Ссылка на товар
+    :return: None
+    """
     try:
         logger.info(f"Продукт добавлен: {product_links_benefit}")
         ProductLinkBenefit.create(product_links_benefit=product_links_benefit)  # Здесь нужно исправить
@@ -113,3 +125,4 @@ def get_all_product_links_benefit():
 if __name__ == '__main__':
     get_all_product_links_benefit()
     remove_duplicates_benefit()
+    remove_duplicates_product_benefit()

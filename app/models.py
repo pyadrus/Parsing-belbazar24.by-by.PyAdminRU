@@ -15,8 +15,8 @@ class ProductLink(BaseModel):
     product_links = CharField()
 
 
-# Модель для хранения информации о продуктах
 class Product(BaseModel):
+    """Модель для хранения информации о продуктах"""
     link = CharField(unique=True)  # Ссылка на товар
     name = CharField()  # Название товара (равно артикулу)
     article = CharField()  # Артикул
@@ -36,7 +36,15 @@ if not Product.table_exists():
 
 
 def add_product(link, name, article, material, color, size):
-    """Функция для добавления данных о продукте в базу данных"""
+    """
+    Функция для добавления данных о продукте в базу данных
+    :param link: Ссылка на товар
+    :param name: Название товара (равно артикулу)
+    :param article: Артикул
+    :param material: Материал
+    :param color: Цвет
+    :param size: Размер
+    """
     try:
         Product.create(
             link=link,
@@ -54,7 +62,10 @@ def add_product(link, name, article, material, color, size):
 
 
 def add_user(product_links):
-    """ Функция для записи данных в базу данных """
+    """
+    Функция для записи данных в базу данных
+    :param product_links: Ссылка на товар
+    """
     try:
         ProductLink.create(product_links=product_links)
     except IntegrityError:

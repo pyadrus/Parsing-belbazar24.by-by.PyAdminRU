@@ -2,18 +2,18 @@ import csv
 from peewee import *
 from loguru import logger
 
-# Настройка подключения к базе данных
-db = SqliteDatabase('database.db')
+db = SqliteDatabase('database.db')  # Настройка подключения к базе данных
 
 
-# Определение модели
 class BaseModel(Model):
+    """Определение модели"""
+
     class Meta:
         database = db
 
 
-# Модель для хранения информации о продуктах
 class Product(BaseModel):
+    """Модель для хранения информации о продуктах"""
     link = CharField(unique=True)  # Ссылка на товар
     name = CharField()  # Название товара (равно артикулу)
     article = CharField()  # Артикул
@@ -23,7 +23,10 @@ class Product(BaseModel):
 
 
 def export_products_to_csv(file_path):
-    """Функция для экспорта данных из таблицы `Product` в CSV файл."""
+    """
+    Функция для экспорта данных из таблицы `Product` в CSV файл.
+    :param file_path: Путь к файлу
+    """
     try:
         # Открытие файла для записи
         with open(file_path, mode='w', newline='', encoding='utf-8') as csvfile:
@@ -53,8 +56,8 @@ def export_products_to_csv(file_path):
         logger.error(f"Ошибка при экспорте данных в CSV: {e}")
 
 
-# Модель для хранения информации о продуктах
 class ProductBenefit(BaseModel):
+    """Модель для хранения информации о продуктах"""
     link = CharField(unique=True)  # Ссылка на товар
     name = CharField()  # Название товара (равно артикулу)
     article = CharField()  # Артикул
@@ -64,7 +67,10 @@ class ProductBenefit(BaseModel):
 
 
 def export_products_to_csv_benefit(file_path):
-    """Функция для экспорта данных из таблицы `Product` в CSV файл."""
+    """
+    Функция для экспорта данных из таблицы `Product` в CSV файл.
+    :param file_path: Путь к файлу
+    """
     try:
         # Открытие файла для записи
         with open(file_path, mode='w', newline='', encoding='utf-8') as csvfile:

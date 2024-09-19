@@ -13,7 +13,10 @@ base_url = 'https://belbazar24.by'
 
 
 def get_html_benefit(url):
-    """Получить HTML-код страницы по URL."""
+    """
+    Получить HTML-код страницы по URL.
+    :param url: URL страницы
+    """
     response = requests.get(url)
     if response.status_code == 200:
         return response.text
@@ -23,7 +26,10 @@ def get_html_benefit(url):
 
 
 def extract_product_benefit(soup):
-    """Извлечь ссылки на товары со страницы."""
+    """
+    Извлечь ссылки на товары со страницы.
+    :param soup: Страница
+    """
     product_links = []
     links = soup.find_all('a', class_='product_item_image')  # Поиск всех тегов <a> с классом 'product_item_image'
     for link in links:
@@ -35,7 +41,10 @@ def extract_product_benefit(soup):
 
 
 def find_max_page_benefit(soup):
-    """Найти наибольший номер страницы из навигации."""
+    """
+    Найти наибольший номер страницы из навигации.
+    :param soup: Страница
+    """
     max_page = 1
     page_numbers = soup.select(
         '.navigation_content a')  # Поиск всех ссылок на страницы в элементе с классом 'navigation_content'
@@ -50,7 +59,10 @@ def find_max_page_benefit(soup):
 
 
 def scrape_all_pages_benefit(start_url):
-    """Собирать ссылки на товары со всех страниц с пагинацией."""
+    """
+    Собирать ссылки на товары со всех страниц с пагинацией.
+    :param start_url: URL начальной страницы
+    """
 
     remove_duplicates_benefit()  # Удаление дубликатов из базы данных
 
@@ -84,7 +96,10 @@ def scrape_all_pages_benefit(start_url):
 
 
 def remove_product_link_benefit(link):
-    """Функция для удаления записи из таблицы `Product_Link` по значению `product_links`."""
+    """
+    Функция для удаления записи из таблицы `Product_Link` по значению `product_links`.
+    :param link: Ссылка
+    """
     try:
         query = ProductLinkBenefit.get(ProductLinkBenefit.product_links_benefit == link)
         query.delete_instance()

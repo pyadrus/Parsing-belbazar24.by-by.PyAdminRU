@@ -8,12 +8,13 @@ from loguru import logger
 from app.models import add_user, remove_duplicates, get_all_product_links, add_product, remove_duplicates_product, \
     ProductLink
 
-# URL начальной страницы
-base_url = 'https://belbazar24.by'
+base_url = 'https://belbazar24.by'  # URL начальной страницы
 
 
 def get_html(url):
-    """Получить HTML-код страницы по URL."""
+    """Получить HTML-код страницы по URL.
+    :param url: URL страницы
+    """
     response = requests.get(url)
     if response.status_code == 200:
         return response.text
@@ -23,7 +24,9 @@ def get_html(url):
 
 
 def extract_product_links(soup):
-    """Извлечь ссылки на товары со страницы."""
+    """Извлечь ссылки на товары со страницы.
+    :param soup: HTML-код страницы
+    """
     product_links = []
     links = soup.find_all('a', class_='product_item_image')  # Поиск всех тегов <a> с классом 'product_item_image'
     for link in links:
@@ -35,7 +38,10 @@ def extract_product_links(soup):
 
 
 def find_max_page(soup):
-    """Найти наибольший номер страницы из навигации."""
+    """
+    Найти наибольший номер страницы из навигации.
+    :param soup: HTML-код страницы
+    """
     max_page = 1
     page_numbers = soup.select(
         '.navigation_content a')  # Поиск всех ссылок на страницы в элементе с классом 'navigation_content'
@@ -50,7 +56,10 @@ def find_max_page(soup):
 
 
 def scrape_all_pages(start_url):
-    """Собирать ссылки на товары со всех страниц с пагинацией."""
+    """
+    Собирать ссылки на товары со всех страниц с пагинацией.
+    :param start_url: URL начальной страницы
+    """
 
     remove_duplicates()  # Удаление дубликатов из базы данных
 
@@ -84,7 +93,10 @@ def scrape_all_pages(start_url):
 
 
 def remove_product_link(link):
-    """Функция для удаления записи из таблицы `Product_Link` по значению `product_links`."""
+    """
+    Функция для удаления записи из таблицы `Product_Link` по значению `product_links`.
+    :param link: Ссылка на товар
+    """
     try:
         query = ProductLink.get(ProductLink.product_links == link)
         query.delete_instance()
